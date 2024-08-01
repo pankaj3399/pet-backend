@@ -138,10 +138,57 @@ const petDetails = asyncHandler(async (req, res) => {
     }
 });
 
+const allPetDetails = asyncHandler(async (req, res) => {
+    try {
+        // Get limit and offset from request body
+        let { limit, offset } = req.body;
+        limit = parseInt(limit, 10) || 10; // Default limit to 10 if not specified
+        offset = parseInt(offset, 10) || 0; // Default offset to 0 if not specified
+
+        // Fetch paginated pet details with populated image data
+        const pets = await Pet.find({})
+            .populate('image') // Populate the image field
+            .skip(offset)
+            .limit(limit);
+
+        // Convert image data to base64 strings
+        const petsWithBase64Images = pets.map(pet => {
+            const base64Image = pet.image.data.toString('base64');
+            return {
+                ...pet._doc,
+                image: {
+                    ...pet.image._doc,
+                    data: base64Image
+                }
+            };
+        });
+
+        // Count total number of pets in the collection
+        const totalPets = await Pet.countDocuments();
+
+        // Prepare response with paginated data
+        const response = {
+            pets: petsWithBase64Images,
+            totalPets,
+            currentPage: Math.floor(offset / limit) + 1,
+            totalPages: Math.ceil(totalPets / limit),
+            limit,
+            offset,
+        };
+
+        return res.status(200).json(new ApiResponse(200, response, "All pet details fetched successfully"));
+    } catch (error) {
+        throw new ApiError(error?.statusCode || 500, error?.message || "Something went wrong while fetching pets");
+    }
+});
+
+
+
 
 export {
     addPet,
     updatePet,
     removePet,
-    petDetails
+    petDetails,
+    allPetDetails
 }

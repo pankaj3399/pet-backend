@@ -8,20 +8,11 @@ import morganMiddleware from "./logger/morgan.logger.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
 import indexRouter from "./routes/index.js";
-import { seedAdmin } from "./seed.js";
 
 const app = express();
 const httpServer = createServer(app);
 
-app.use(
-    cors({
-        origin:
-            process.env.CORS_ORIGIN === "*"
-                ? "*" // This might give CORS error for some origins due to credentials set to true
-                : process.env.CORS_ORIGIN?.split(","), // For multiple cors origin for production. Refer https://github.com/hiteshchoudhary/apihub/blob/a846abd7a0795054f48c7eb3e71f3af36478fa96/.env.sample#L12C1-L12C12
-        credentials: true,
-    })
-);
+app.use(cors());
 
 /*
 `requestIp.mw()` is middleware that attaches the IP address of the client to the `req` object as `req.clientIp`. 
@@ -67,14 +58,6 @@ app.use(cookieParser());
 
 //morgan middleware for logging http requests in console for development environment only.
 app.use(morganMiddleware);
-
-app.get("/", async (req, res) => {
-    res.json({
-        status: true,
-        statucCode: 200,
-        message: "Welcome to pet adoption"
-    })
-});
 
 //routes declaration
 app.use("/api/v1", indexRouter);
