@@ -1,6 +1,7 @@
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 /**
 * This function is used to sanitize the file before uploading it to the server.
@@ -38,24 +39,34 @@ const sanitizeFile = (file, cb) => {
     }
 };
 
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         /*
+//             The `fs.existsSync()` method is used to synchronously test whether or not the given path exists.
+//             If path not found, it will create the path.
+//         */
+//         if (!fs.existsSync("./public/temp")) {
+//             fs.mkdirSync("./public/temp", { recursive: true });
+//         }
+
+//         // This storage needs public/temp folder in the root directory
+//         // Else it will throw an error saying cannot find path public/temp
+//         cb(null, "./public/temp")
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.originalname)
+//     }
+// })
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        /*
-            The `fs.existsSync()` method is used to synchronously test whether or not the given path exists.
-            If path not found, it will create the path.
-        */
-        if (!fs.existsSync("./public/temp")) {
-            fs.mkdirSync("./public/temp", { recursive: true });
-        }
-
-        // This storage needs public/temp folder in the root directory
-        // Else it will throw an error saying cannot find path public/temp
-        cb(null, "./public/temp")
+        const tempDir = os.tmpdir();
+        cb(null, tempDir);
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname)
+        cb(null, file.originalname);
     }
-})
+});
 
 export const upload = multer({
     storage,

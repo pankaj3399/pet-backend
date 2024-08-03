@@ -6,6 +6,7 @@ const router = express.Router();
 router.route("/:petId")
     .get(petDetails);
 
-router.route("/all").post(allPetDetails)
+router.route("/all")
+    .post(allPetDetails)
 
 export default router;

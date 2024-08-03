@@ -182,9 +182,6 @@ const allPetDetails = asyncHandler(async (req, res) => {
     }
 });
 
-
-
-
 export {
     addPet,
     updatePet,

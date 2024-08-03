@@ -58,7 +58,13 @@ app.use(cookieParser());
 
 //morgan middleware for logging http requests in console for development environment only.
 app.use(morganMiddleware);
-
+app.get("/", async (req, res) => {
+    res.json({
+        status: true,
+        statucCode: 200,
+        message: "Welcome to pet adoption"
+    })
+});
 //routes declaration
 app.use("/api/v1", indexRouter);
 
