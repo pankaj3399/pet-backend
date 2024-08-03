@@ -1,1 +1,1 @@
-export const DB_NAME = "pet_adoption";
+export const DB_NAME = "pet";
